@@ -117,6 +117,7 @@
         const Truck = (props) => <LucideIcon name="Truck" {...props} />;
         const Handshake = (props) => <LucideIcon name="Handshake" {...props} />;
         const MessageCircle = (props) => <LucideIcon name="MessageCircle" {...props} />;
+        const Globe = (props) => <LucideIcon name="Globe" {...props} />;
 
         // --- Hooks & Componentes de Animação ---
         const useOnScreen = (ref, rootMargin = "0px") => {
@@ -183,10 +184,10 @@
                         onClick={onClick}
                     >
                         <div className="flex items-center gap-4">
-                            <span className="text-xl font-bold text-slate-900 dark:text-cyan-400 opacity-60 group-hover:opacity-100 transition-opacity">
+                            <span className="text-xl font-bold text-cyan-400 opacity-80 group-hover:opacity-100 transition-opacity">
                                 {number} .
                             </span>
-                            <span className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-cyan-400 transition-colors">
+                            <span className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors">
                                 {question}
                             </span>
                         </div>
@@ -195,7 +196,7 @@
                         </div>
                     </button>
                     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-48 opacity-100 pb-6' : 'max-h-0 opacity-0'}`}>
-                        <p className="text-slate-600 dark:text-slate-400 pl-12 pr-4 leading-relaxed">
+                        <p className="text-slate-300 pl-12 pr-4 leading-relaxed">
                             {answer}
                         </p>
                     </div>
