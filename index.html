@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evereste Academy - Desenvolva sua carreira em tecnologia</title>
+    <title>Evereste Academy - A sua escalada para o topo</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -60,39 +60,27 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- Componente Utilitário para Ícones Lucide (CORRIGIDO) ---
+        // --- Componente Utilitário para Ícones Lucide ---
         const LucideIcon = ({ name, size = 24, className = "", ...props }) => {
             const iconRef = useRef(null);
 
             useEffect(() => {
-                // Verifica se a biblioteca Lucide carregou globalmente
                 if (window.lucide && iconRef.current) {
                     const { icons, createElement } = window.lucide;
                     const iconNode = icons[name];
 
                     if (iconNode && createElement) {
-                        // Limpa o conteúdo anterior
                         iconRef.current.innerHTML = '';
-                        
-                        // Cria o elemento SVG usando a função de fábrica do Lucide
                         const svgElement = createElement(iconNode);
-                        
-                        // Aplica atributos personalizados
                         svgElement.setAttribute('width', size);
                         svgElement.setAttribute('height', size);
-                        
-                        // Combina classes existentes com a prop className
                         if (className) {
                             const currentClass = svgElement.getAttribute('class') || '';
                             svgElement.setAttribute('class', `${currentClass} ${className}`.trim());
                         }
-
-                        // Aplica outras props (como strokeWidth, color, etc, se passadas)
                         Object.keys(props).forEach(key => {
                             svgElement.setAttribute(key, props[key]);
                         });
-
-                        // Adiciona ao DOM
                         iconRef.current.appendChild(svgElement);
                     }
                 }
@@ -101,10 +89,11 @@
             return <span ref={iconRef} className="inline-flex items-center justify-center" />;
         };
 
-        // Mapeamento dos ícones usados no código original
+        // --- Mapeamento de Ícones ---
         const Menu = (props) => <LucideIcon name="Menu" {...props} />;
         const X = (props) => <LucideIcon name="X" {...props} />;
         const ChevronRight = (props) => <LucideIcon name="ChevronRight" {...props} />;
+        const ChevronDown = (props) => <LucideIcon name="ChevronDown" {...props} />;
         const Code = (props) => <LucideIcon name="Code" {...props} />;
         const Terminal = (props) => <LucideIcon name="Terminal" {...props} />;
         const Database = (props) => <LucideIcon name="Database" {...props} />;
@@ -121,9 +110,15 @@
         const Layers = (props) => <LucideIcon name="Layers" {...props} />;
         const Trophy = (props) => <LucideIcon name="Trophy" {...props} />;
         const Calendar = (props) => <LucideIcon name="Calendar" {...props} />;
+        const LineChart = (props) => <LucideIcon name="LineChart" {...props} />;
+        const Megaphone = (props) => <LucideIcon name="Megaphone" {...props} />;
+        const Lightbulb = (props) => <LucideIcon name="Lightbulb" {...props} />;
+        const Truck = (props) => <LucideIcon name="Truck" {...props} />;
+        const Handshake = (props) => <LucideIcon name="Handshake" {...props} />;
+        const MessageCircle = (props) => <LucideIcon name="MessageCircle" {...props} />;
+        const Mountain = (props) => <LucideIcon name="Mountain" {...props} />; // Ícone para o FAQ
 
         // --- Hooks & Componentes de Animação ---
-
         const useOnScreen = (ref, rootMargin = "0px") => {
             const [isIntersecting, setIntersecting] = useState(false);
             useEffect(() => {
@@ -140,7 +135,6 @@
         const FadeIn = ({ children, delay = 0, className = "" }) => {
             const ref = useRef();
             const onScreen = useOnScreen(ref, "-50px");
-            
             return (
                 <div
                 ref={ref}
@@ -155,7 +149,6 @@
         };
 
         // --- Componentes da Interface ---
-
         const Button = ({ children, variant = 'primary', className = '', ...props }) => {
             const baseStyle = "font-bold rounded-full transition-all duration-300 transform hover:-translate-y-1 px-8 py-3 flex items-center justify-center gap-2 cursor-pointer";
             const variants = {
@@ -165,7 +158,6 @@
                 outline: "border border-cyan-500 text-cyan-400 hover:bg-cyan-950",
                 glow: "bg-gradient-to-r from-red-600 to-red-500 text-white shadow-lg shadow-red-500/50 hover:shadow-red-500/70 border border-red-400"
             };
-
             return (
                 <button className={`${baseStyle} ${variants[variant]} ${className}`} {...props}>
                 {children}
@@ -183,19 +175,47 @@
             </div>
         );
 
+        const FAQItem = ({ number, question, answer, isOpen, onClick }) => {
+            return (
+                <div className="border-b border-cyan-500/30 last:border-0">
+                    <button 
+                        className="w-full py-6 flex items-center justify-between text-left focus:outline-none group"
+                        onClick={onClick}
+                    >
+                        <div className="flex items-center gap-4">
+                            <span className="text-xl font-bold text-slate-900 dark:text-cyan-400 opacity-60 group-hover:opacity-100 transition-opacity">
+                                {number} .
+                            </span>
+                            <span className="text-lg font-bold text-slate-800 dark:text-white group-hover:text-cyan-400 transition-colors">
+                                {question}
+                            </span>
+                        </div>
+                        <div className={`transform transition-transform duration-300 text-cyan-500 ${isOpen ? 'rotate-180' : ''}`}>
+                            <ChevronDown size={24} />
+                        </div>
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-48 opacity-100 pb-6' : 'max-h-0 opacity-0'}`}>
+                        <p className="text-slate-600 dark:text-slate-400 pl-12 pr-4 leading-relaxed">
+                            {answer}
+                        </p>
+                    </div>
+                </div>
+            );
+        };
+
         const SchoolCard = ({ icon: Icon, title, courses, color }) => (
-            <div className="group relative p-6 h-full rounded-2xl bg-slate-800 border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:bg-slate-750 hover:shadow-xl hover:-translate-y-1 overflow-hidden cursor-pointer">
+            <div className="group relative p-6 h-full rounded-2xl bg-slate-800 border border-slate-700 hover:border-cyan-500/50 transition-all duration-300 hover:bg-slate-750 hover:shadow-xl hover:-translate-y-1 overflow-hidden cursor-pointer flex flex-col">
                 <div className={`absolute top-0 right-0 w-32 h-32 bg-${color}-500/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110`} />
                 <div className="relative z-10 flex flex-col h-full">
                 <div className={`w-14 h-14 rounded-lg bg-slate-900 flex items-center justify-center mb-6 text-${color}-400 group-hover:text-white transition-colors border border-slate-700 shadow-lg`}>
                     <Icon size={28} />
                 </div>
                 <h3 className="text-2xl font-bold text-white mb-3">{title}</h3>
-                <p className="text-slate-400 text-sm mb-6 flex-grow">
-                    Formações completas em {courses}.
+                <p className="text-slate-400 text-sm mb-6 flex-grow leading-relaxed">
+                    {courses}
                 </p>
-                <div className="flex items-center text-cyan-400 text-sm font-bold group-hover:translate-x-2 transition-transform">
-                    Ver escola <ChevronRight size={16} />
+                <div className="flex items-center text-cyan-400 text-sm font-bold group-hover:translate-x-2 transition-transform mt-auto">
+                    Ver cursos <ChevronRight size={16} />
                 </div>
                 </div>
             </div>
@@ -212,7 +232,7 @@
                     {steps.map((step, i) => (
                     <div key={i} className="flex items-center gap-3 relative z-10">
                         <div className={`w-4 h-4 rounded-full border-2 border-slate-700 bg-slate-900 group-hover:border-${color}-500 transition-colors`} />
-                        <span className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors">{step}</span>
+                        <span className="text-sm text-slate-400 group-hover:text-slate-300 transition-colors leading-tight">{step}</span>
                     </div>
                     ))}
                 </div>
@@ -225,21 +245,21 @@
             </div>
         );
 
-        const InstructorCard = ({ name, role, experience, image }) => (
-            <div className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-cyan-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-cyan-900/20 hover:shadow-lg group">
+        const InstructorCard = ({ name, role, bio, image }) => (
+            <div className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-cyan-500 transition-all duration-300 hover:-translate-y-2 hover:shadow-cyan-900/20 hover:shadow-lg group h-full flex flex-col">
                 <div className="aspect-square bg-slate-700 relative overflow-hidden">
                 <img src={image} alt={name} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                 <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-slate-900 to-transparent p-4 pt-12">
                     <a href="#" className="inline-flex items-center gap-1 text-cyan-400 text-sm font-bold hover:underline">
-                    <Linkedin size={16} /> Conectar
+                    <Linkedin size={16} /> Ver Perfil Completo
                     </a>
                 </div>
                 </div>
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-grow">
                 <h4 className="text-xl font-bold text-white mb-1">{name}</h4>
-                <p className="text-cyan-400 text-sm font-medium mb-3">{role}</p>
-                <p className="text-slate-400 text-sm border-t border-slate-700 pt-3">
-                    {experience}
+                <p className="text-cyan-400 text-sm font-medium mb-4">{role}</p>
+                <p className="text-slate-300 text-sm leading-relaxed border-t border-slate-700 pt-4 flex-grow">
+                    {bio}
                 </p>
                 </div>
             </div>
@@ -249,21 +269,91 @@
 
         function App() {
             const [isMenuOpen, setIsMenuOpen] = useState(false);
+            const [openFAQ, setOpenFAQ] = useState(0);
+
+            const toggleFAQ = (index) => {
+                setOpenFAQ(openFAQ === index ? -1 : index);
+            };
+
+            const faqs = [
+                {
+                    question: "Como funciona o acesso aos cursos",
+                    answer: "Após a matrícula, você recebe acesso imediato à plataforma com login e senha personalizados. Todos os cursos ficam disponíveis 24/7 para estudar no seu ritmo."
+                },
+                {
+                    question: "Há certificação? Eles são reconhecidos?",
+                    answer: "Sim, ao concluir cada curso ou trilha, você recebe um certificado digital com código de validação, aceito em todo território nacional para comprovação de horas complementares e currículo."
+                },
+                {
+                    question: "Há suporte técnico disponível?",
+                    answer: "Com certeza. Dispomos de uma equipe de suporte dedicada via chat e e-mail para resolver qualquer dúvida técnica ou dificuldade de acesso à plataforma que você possa ter."
+                },
+                {
+                    question: "Há recursos de acessibilidade?",
+                    answer: "Sim, a plataforma foi desenvolvida com foco em inclusão. Contamos com legendas em todas as aulas, compatibilidade com leitores de tela e opções de alto contraste."
+                }
+            ];
 
             const schools = [
-                { icon: Code, title: "Programação", courses: "Lógica, Python, Node.js, PHP, Java e .NET", color: "green" },
-                { icon: Layout, title: "Front-end", courses: "HTML, CSS, React, Angular, Vue e Acessibilidade", color: "cyan" },
-                { icon: Database, title: "Data Science", courses: "SQL, Banco de Dados, Machine Learning e BI", color: "red" },
-                { icon: Terminal, title: "DevOps", courses: "AWS, Azure, Docker, Kubernetes e Linux", color: "purple" },
-                { icon: Smartphone, title: "Mobile", courses: "React Native, Flutter, Kotlin e Swift", color: "yellow" },
-                { icon: Briefcase, title: "Inovação & Gestão", courses: "Métodos Ágeis, Scrum, Product Owner e Softskills", color: "orange" },
+                { 
+                    icon: Users, // Representando Gestão/Liderança
+                    title: "Gestão & Liderança", 
+                    courses: "Liderança, Cultura Organizacional, Gestão por Competências, Planejamento Estratégico, Gestão da Inovação e Empreendedorismo.", 
+                    color: "blue" 
+                },
+                { 
+                    icon: Layers, // Representando Projetos/Processos
+                    title: "Projetos & Processos", 
+                    courses: "Gestão de Projetos (PMI/Ágil), Gestão de Riscos, Análise de Viabilidade, Cronograma, Custos e Logística Integrada.", 
+                    color: "green" 
+                },
+                { 
+                    icon: Megaphone, // Representando Marketing
+                    title: "Marketing & Vendas", 
+                    courses: "Branding, Gestão Comercial de Alta Performance, Customer Experience (CX), Gestão de Clientes e Marketing Pessoal.", 
+                    color: "purple" 
+                },
+                { 
+                    icon: LineChart, // Representando Finanças
+                    title: "Finanças & Contabilidade", 
+                    courses: "Contabilidade Financeira, Controladoria, Gestão de Custos, Auditoria, Day Trade e Investimentos na Bolsa.", 
+                    color: "yellow" 
+                },
+                { 
+                    icon: MonitorPlay, // Representando Tecnologia/Ferramentas
+                    title: "Tecnologia & Dados", 
+                    courses: "Microsoft Excel Avançado, Power BI, Business Intelligence, Gestão Estratégica de TI e Cultura Digital.", 
+                    color: "cyan" 
+                },
+                { 
+                    icon: Trophy, // Representando Carreira/Soft Skills
+                    title: "Carreira & Desenv. Humano", 
+                    courses: "Soft Skills, Inteligência Emocional, Comunicação, Negociação de Conflitos, Networking e Mercado de Trabalho.", 
+                    color: "orange" 
+                },
             ];
 
             const journeys = [
-                { title: "Back-end com Java e Spring", steps: ["Java OO", "Spring Boot", "API REST", "Deploy na Cloud"], color: "green" },
-                { title: "Especialista React.js", steps: ["React Hooks", "Next.js", "Tailwind CSS", "Redux & Context"], color: "cyan" },
-                { title: "Python para Data Science", steps: ["Pandas & NumPy", "Matplotlib", "Machine Learning", "Deep Learning"], color: "red" },
-                { title: "DevOps Engineer", steps: ["Linux Fundamentals", "Docker Containers", "CI/CD Pipelines", "Terraform"], color: "purple" }
+                { 
+                    title: "Empreendedor de Sucesso", 
+                    steps: ["Introdução ao Empreendedorismo", "Elaboração de Plano de Negócios", "Gestão Financeira para Novos Negócios", "Estudo de Oportunidades"], 
+                    color: "blue" 
+                },
+                { 
+                    title: "Liderança Ágil 3.0", 
+                    steps: ["Fundamentos da Liderança", "Cultura Organizacional", "Gestão por Competências", "Retenção de Talentos"], 
+                    color: "green" 
+                },
+                { 
+                    title: "Expert em Dados & BI", 
+                    steps: ["Microsoft Excel Completo", "Conceitos de BI", "Power BI na Prática", "Análise de Indicadores"], 
+                    color: "cyan" 
+                },
+                { 
+                    title: "Gestão Comercial", 
+                    steps: ["Gestão da Carteira de Clientes", "Customer Experience", "Negociação e Conflitos", "Alta Performance em Vendas"], 
+                    color: "purple" 
+                }
             ];
 
             return (
@@ -285,7 +375,7 @@
                         <a href="#escolas" className="hover:text-white transition-colors">Escolas</a>
                         <a href="#jornadas" className="hover:text-white transition-colors">Jornadas</a>
                         <a href="#aovivo" className="text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 font-bold"><span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Ao Vivo</a>
-                        <a href="#empresas" className="hover:text-white transition-colors">Para Empresas</a>
+                        <a href="#faq" className="hover:text-white transition-colors">Dúvidas</a>
                         <Button variant="outline" className="px-6 py-2 text-sm">Portal do Aluno</Button>
                         <Button variant="primary" className="px-6 py-2 text-sm shadow-none hover:shadow-cyan-500/20">Matricule-se</Button>
                     </nav>
@@ -315,13 +405,13 @@
                     <FadeIn className="lg:w-1/2 text-center lg:text-left">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-cyan-400 text-xs font-bold uppercase tracking-widest mb-6 hover:bg-slate-750 transition-colors cursor-default">
                         <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
-                        Nova Turma: Fullstack JavaScript
+                        Turmas abertas: Gestão & Projetos
                         </div>
                         <h1 className="text-5xl lg:text-7xl font-extrabold text-white mb-6 leading-[1.1]">
-                        A sua escalada para o <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">topo da tecnologia</span>.
+                        A sua escalada para o <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">topo da sua carreira</span>.
                         </h1>
                         <p className="text-lg text-slate-400 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                        Desenvolva sua carreira com cursos de tecnologia, mentorias e desafios práticos. Do zero ao sênior, com <strong>aulas ao vivo</strong> toda semana.
+                        Domine as habilidades mais exigidas pelo mercado, de Gestão e Liderança a Power BI e Finanças. Uma plataforma completa com <strong>aulas interativas</strong> e conteúdo 100% online.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                         <Button variant="primary" className="text-lg px-10 group">
@@ -338,18 +428,18 @@
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent z-10"></div>
                         <div className="aspect-video bg-slate-800 flex items-center justify-center relative">
                             <img 
-                            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
-                            alt="Alunos estudando tecnologia" 
+                            src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" 
+                            alt="Reunião de estratégia e negócios" 
                             className="w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000"
                             />
                             <div className="absolute z-20 bottom-8 left-8 right-8">
                                 <div className="bg-slate-900/90 backdrop-blur border border-slate-700 p-4 rounded-xl flex items-center gap-4 shadow-xl">
-                                <div className="bg-green-500/20 p-3 rounded-full text-green-400 animate-bounce-slow">
-                                    <Code size={24} />
+                                <div className="bg-blue-500/20 p-3 rounded-full text-blue-400 animate-bounce-slow">
+                                    <Layers size={24} />
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-400 uppercase font-bold">Carreira em Foco</p>
-                                    <p className="text-white font-bold">Desenvolvedor Fullstack Sênior</p>
+                                    <p className="text-xs text-slate-400 uppercase font-bold">Em Alta</p>
+                                    <p className="text-white font-bold">Kanban e Scrum</p>
                                 </div>
                                 <div className="ml-auto hidden sm:block">
                                     <div className="h-2 w-24 bg-slate-700 rounded-full overflow-hidden">
@@ -368,13 +458,13 @@
                 <section className="border-y border-slate-800 bg-slate-900/50 py-10">
                     <FadeIn className="container mx-auto px-6">
                     <p className="text-center text-slate-500 text-sm font-semibold uppercase tracking-widest mb-8">
-                        Quem confia na metodologia Evereste
+                        Metodologia aplicada por grandes players
                     </p>
                     <div className="flex flex-wrap justify-center gap-12 md:gap-20 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 items-center">
-                        <div className="flex items-center gap-2 font-bold text-xl text-slate-300 hover:text-white transition-colors"><Building2 size={24} /> TECH CORP</div>
-                        <div className="flex items-center gap-2 font-bold text-xl text-slate-300 hover:text-white transition-colors"><Database size={24} /> DATA SYSTEMS</div>
-                        <div className="flex items-center gap-2 font-bold text-xl text-slate-300 hover:text-white transition-colors"><Code size={24} /> SOFT HOUSE</div>
-                        <div className="flex items-center gap-2 font-bold text-xl text-slate-300 hover:text-white transition-colors"><Layout size={24} /> DESIGN STUDIO</div>
+                        <div className="flex items-center gap-2 font-bold text-xl text-slate-300 hover:text-white transition-colors"><Building2 size={24} /> HOLDING S.A</div>
+                        <div className="flex items-center gap-2 font-bold text-xl text-slate-300 hover:text-white transition-colors"><Database size={24} /> FINTECH G</div>
+                        <div className="flex items-center gap-2 font-bold text-xl text-slate-300 hover:text-white transition-colors"><Truck size={24} /> LOGÍSTICA BR</div>
+                        <div className="flex items-center gap-2 font-bold text-xl text-slate-300 hover:text-white transition-colors"><Layout size={24} /> AGÊNCIA DIGITAL</div>
                     </div>
                     </FadeIn>
                 </section>
@@ -384,9 +474,9 @@
                     <div className="container mx-auto px-6">
                     <FadeIn>
                         <SectionHeading 
-                        pre="Explore por Área"
-                        title="Nossas Escolas de Tecnologia"
-                        subtitle="Conteúdos aprofundados para todas as etapas da sua carreira."
+                        pre="Nossas Áreas de Conhecimento"
+                        title="Formações completas para sua evolução"
+                        subtitle="Explore nossas escolas e encontre o conteúdo ideal para o seu momento profissional."
                         />
                     </FadeIn>
                     
@@ -402,23 +492,22 @@
 
                 {/* Jornadas (Formações Específicas) */}
                 <section id="jornadas" className="py-24 bg-slate-800 relative overflow-hidden">
-                    {/* Background Texture */}
                     <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '40px 40px' }}></div>
                     
                     <div className="container mx-auto px-6 relative z-10">
                     <FadeIn>
                         <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
                         <div className="text-left">
-                            <span className="text-cyan-400 font-bold uppercase tracking-wider text-sm mb-2 block">Caminhos Guiados</span>
+                            <span className="text-cyan-400 font-bold uppercase tracking-wider text-sm mb-2 block">Trilhas de Carreira</span>
                             <h2 className="text-3xl md:text-5xl font-extrabold text-white leading-tight">
-                            Formações e Jornadas
+                            Jornadas Guiadas
                             </h2>
                             <p className="text-slate-400 text-lg mt-4 max-w-xl">
-                            Não sabe por onde começar? Siga nossas trilhas sequenciais desenhadas por especialistas para dominar uma stack.
+                            Caminhos sequenciais desenhados por especialistas para você ir do básico ao avançado em uma competência específica.
                             </p>
                         </div>
                         <Button variant="secondary" className="whitespace-nowrap">
-                            Ver todas as 45 formações
+                            Ver todas as trilhas
                         </Button>
                         </div>
                     </FadeIn>
@@ -433,9 +522,8 @@
                     </div>
                 </section>
 
-                {/* Diferencial: Ao Vivo (Destaque Animado) */}
+                {/* Diferencial: Ao Vivo (Com Destaque para Interatividade) */}
                 <section id="aovivo" className="py-32 bg-slate-900 relative overflow-hidden">
-                    {/* Abstract animated background */}
                     <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-red-600/10 rounded-full blur-3xl animate-pulse pointer-events-none"></div>
                     <div className="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-red-900/10 to-transparent pointer-events-none"></div>
 
@@ -446,16 +534,15 @@
                             {/* Card simulando a interface da Live */}
                             <div className="bg-slate-900 rounded-2xl border border-slate-700 p-2 shadow-2xl relative z-20 transform transition-transform duration-500 group-hover:rotate-y-2 group-hover:rotate-x-2">
                                 <div className="bg-slate-800 rounded-xl overflow-hidden aspect-video relative">
-                                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover opacity-60" />
+                                <img src="https://images.unsplash.com/photo-1544531586-fde5298cdd40?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" className="w-full h-full object-cover opacity-60" />
                                 
-                                {/* UI Elements overlay */}
                                 <div className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-2 animate-pulse shadow-lg shadow-red-600/40">
                                     <span className="w-2 h-2 bg-white rounded-full"></span> AO VIVO
                                 </div>
                                 
                                 <div className="absolute bottom-4 left-4 right-4 flex items-center gap-3">
                                     <div className="bg-slate-900/80 backdrop-blur text-white px-4 py-2 rounded-lg text-sm font-bold flex-1">
-                                    Professor: Como otimizar queries SQL...
+                                    Workshop: Estratégias de Negociação
                                     </div>
                                     <div className="w-10 h-10 bg-cyan-500 rounded-full flex items-center justify-center text-slate-900 font-bold shadow-lg">
                                     <Users size={20} />
@@ -463,20 +550,18 @@
                                 </div>
                                 </div>
                                 
-                                {/* Chat simulation */}
                                 <div className="mt-2 space-y-2 px-2 pb-2">
                                 <div className="flex gap-2 items-center text-xs text-slate-400">
                                     <div className="w-6 h-6 rounded-full bg-purple-500"></div>
-                                    <span className="text-white font-bold">Maria:</span> Entendi, então o Index ajuda na performance?
+                                    <span className="text-white font-bold">Ana:</span> Como lidar com conflitos em equipes remotas?
                                 </div>
                                 <div className="flex gap-2 items-center text-xs text-slate-400">
                                     <div className="w-6 h-6 rounded-full bg-green-500"></div>
-                                    <span className="text-white font-bold">João:</span> Exatamente!
+                                    <span className="text-white font-bold">Prof. Carlos:</span> Excelente ponto, Ana! Vamos abordar isso agora.
                                 </div>
                                 </div>
                             </div>
                             
-                            {/* Decorative element behind */}
                             <div className="absolute -inset-4 bg-gradient-to-r from-red-500 to-orange-600 rounded-2xl blur-lg opacity-30 z-10 group-hover:opacity-50 transition-opacity duration-500"></div>
                             </div>
                         </FadeIn>
@@ -486,30 +571,30 @@
                             <MonitorPlay size={48} />
                             </div>
                             <h2 className="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                            Aulas Ao Vivo <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">Toda Semana</span>
+                            Aulas Ao Vivo & <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">Interatividade</span>
                             </h2>
                             <p className="text-slate-300 text-lg mb-8 leading-relaxed">
-                            A tecnologia muda rápido demais para cursos gravados há anos. No Evereste, você tem encontros síncronos com Tech Leads para debater o mercado <strong>agora</strong>.
+                            O mercado muda rápido. No Evereste, conectamos você diretamente com executivos e especialistas para mentorias e debates em tempo real.
                             </p>
                             
                             <div className="space-y-6 mb-10">
                             <div className="flex gap-4">
                                 <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-red-500 border border-slate-700 flex-shrink-0">
-                                <Trophy size={24} />
+                                <Handshake size={24} />
                                 </div>
                                 <div>
-                                <h4 className="text-white font-bold text-lg">Mentorias de Carreira</h4>
-                                <p className="text-slate-400 text-sm">Sessões em grupo para revisão de currículo e LinkedIn.</p>
+                                <h4 className="text-white font-bold text-lg">Aulas Interativas</h4>
+                                <p className="text-slate-400 text-sm">Levante a mão, abra o microfone e tire suas dúvidas na hora. Aqui você não é apenas um espectador.</p>
                                 </div>
                             </div>
                             <div className="flex gap-4">
                                 <div className="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-red-500 border border-slate-700 flex-shrink-0">
-                                <Code size={24} />
+                                <MessageCircle size={24} />
                                 </div>
                                 <div>
-                                <h4 className="text-white font-bold text-lg">Code Reviews ao Vivo</h4>
-                                <p className="text-slate-400 text-sm">Traga seu código e receba feedback de especialistas em tempo real.</p>
+                                <h4 className="text-white font-bold text-lg">Networking Real</h4>
+                                <p className="text-slate-400 text-sm">Troque experiências com profissionais de diversas áreas e expanda suas conexões.</p>
                                 </div>
                             </div>
                             </div>
@@ -522,28 +607,48 @@
                     </div>
                 </section>
 
-                {/* Instrutores (Authority) */}
+                {/* Instrutores (Descrição Estilo LinkedIn) */}
                 <section id="instrutores" className="py-24 bg-slate-900">
                     <div className="container mx-auto px-6">
                     <FadeIn>
                         <SectionHeading 
-                        title="Aprenda com quem lidera o mercado" 
-                        subtitle="Nossos instrutores são Tech Leads, Seniors e especialistas atuantes em grandes empresas."
+                        title="Mestres do Mercado" 
+                        subtitle="Aprenda com quem vive a realidade corporativa e lidera transformações."
                         />
                     </FadeIn>
                     
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
                         {[
-                            { name: "Ricardo Silva", role: "Senior Software Engineer", exp: "12 anos de exp. Ex-Google e Amazon.", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" },
-                            { name: "Fernanda Lima", role: "Head of Data Science", exp: "PhD em Estatística. Lidera times de IA.", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" },
-                            { name: "André Santos", role: "Tech Lead Front-end", exp: "Contribuidor React Core Team.", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" },
-                            { name: "Juliana Costa", role: "DevOps Specialist", exp: "Especialista em Cloud AWS/Azure.", img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" }
+                            { 
+                                name: "Carlos Mendes", 
+                                role: "Diretor de Operações e Estratégia", 
+                                bio: "Executivo com 15+ anos de experiência liderando expansões internacionais em multinacionais de varejo. Especialista em conectar Planejamento Estratégico com execução ágil.", 
+                                img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                            },
+                            { 
+                                name: "Juliana Rocha", 
+                                role: "Head de Inovação & Projetos", 
+                                bio: "PMP e Agile Coach. Liderou a transformação digital de grandes bancos. Apaixonada por descomplicar a Gestão de Projetos e formar times de alta performance.", 
+                                img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                            },
+                            { 
+                                name: "Roberto Alencar", 
+                                role: "CFO & Consultor Financeiro", 
+                                bio: "Auditor e Consultor. Dedica-se a ensinar finanças corporativas e investimentos de forma prática. Ajuda empresas a otimizarem custos e maximizarem o valuation.", 
+                                img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                            },
+                            { 
+                                name: "Fernanda Costa", 
+                                role: "Especialista em BI & Data Analytics", 
+                                bio: "Cientista de Dados focada em Business Intelligence. Ensina gestores a tomarem decisões baseadas em dados usando Excel Avançado e Power BI. Mestra em Cultura Digital.", 
+                                img: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" 
+                            }
                         ].map((inst, i) => (
                         <FadeIn key={i} delay={i * 100}>
                             <InstructorCard 
                             name={inst.name} 
                             role={inst.role} 
-                            experience={inst.exp}
+                            bio={inst.bio}
                             image={inst.img}
                             />
                         </FadeIn>
@@ -568,12 +673,12 @@
                             <Users size={32} />
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-2">Comunidade</h3>
-                            <p className="text-slate-400 text-sm mb-6 flex-1">Cursos introdutórios gratuitos para democratizar o acesso à tecnologia.</p>
+                            <p className="text-slate-400 text-sm mb-6 flex-1">Cursos introdutórios gratuitos para democratizar o acesso ao conhecimento.</p>
                             <div className="text-4xl font-bold text-white mb-6">Grátis</div>
                             <ul className="space-y-3 text-slate-300 text-sm mb-8">
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Introdução à Programação</li>
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Lógica e Algoritmos</li>
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Acesso ao Discord básico</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Introdução ao Excel</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Marketing Pessoal</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Finanças Pessoais</li>
                             </ul>
                             <Button variant="outline" className="w-full mt-auto">Acessar Grátis</Button>
                         </div>
@@ -584,18 +689,18 @@
                         <div className="bg-slate-800 p-8 rounded-2xl border-2 border-cyan-500 shadow-2xl shadow-cyan-500/20 relative flex flex-col h-full transform transition-transform hover:-translate-y-3">
                             <div className="absolute top-0 right-0 bg-cyan-500 text-slate-900 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">MAIS POPULAR</div>
                             <div className="mb-6 bg-cyan-500 text-slate-900 w-16 h-16 rounded-lg flex items-center justify-center shadow-lg shadow-cyan-500/50">
-                            <Code size={32} />
+                            <Briefcase size={32} />
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-2">Profissional</h3>
-                            <p className="text-cyan-400 text-sm mb-6 flex-1">Acesso total à plataforma, mentorias e aulas ao vivo.</p>
+                            <p className="text-cyan-400 text-sm mb-6 flex-1">Acesso ilimitado a todas as escolas, mentorias e certificados.</p>
                             <div className="text-5xl font-bold text-white mb-6">
                             R$ 119<span className="text-lg text-slate-500 font-normal">/mês</span>
                             </div>
                             <ul className="space-y-3 text-slate-300 text-sm mb-8">
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> +1400 cursos e formações</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> +500 cursos disponíveis</li>
                             <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Aulas ao vivo semanais</li>
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Correção de projetos</li>
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Certificado Profissional</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Projetos práticos e feedback</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-cyan-500" /> Certificado Oficial</li>
                             </ul>
                             <Button variant="primary" className="w-full mt-auto">Assinar Agora</Button>
                         </div>
@@ -608,18 +713,55 @@
                             <Building2 size={32} />
                             </div>
                             <h3 className="text-2xl font-bold text-white mb-2">Para Empresas</h3>
-                            <p className="text-slate-400 text-sm mb-6 flex-1">Capacite seu time ou terceirize a formação de novos talentos.</p>
+                            <p className="text-slate-400 text-sm mb-6 flex-1">Capacite seu time com trilhas personalizadas de Liderança, Vendas e Gestão.</p>
                             <div className="text-3xl font-bold text-white mb-6">Sob Medida</div>
                             <ul className="space-y-3 text-slate-300 text-sm mb-8">
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-slate-500" /> Dashboard de gestão</li>
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-slate-500" /> Trilhas personalizadas</li>
-                            <li className="flex gap-2"><CheckCircle size={16} className="text-slate-500" /> Mentoria exclusiva para o time</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-slate-500" /> Dashboard de gestão de equipe</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-slate-500" /> Trilhas por competência</li>
+                            <li className="flex gap-2"><CheckCircle size={16} className="text-slate-500" /> Mentoria in-company</li>
                             </ul>
                             <Button variant="white" className="w-full mt-auto">Falar com Consultor</Button>
                         </div>
                         </FadeIn>
 
                     </div>
+                    </div>
+                </section>
+
+                {/* FAQ Section */}
+                <section id="faq" className="py-24 bg-slate-900">
+                    <div className="container mx-auto px-6 max-w-4xl">
+                        <FadeIn>
+                            <div className="border border-cyan-500/30 rounded-3xl p-8 md:p-12 bg-slate-800/30 backdrop-blur-sm relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
+                                
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 border-b border-cyan-500/30 pb-6">
+                                    <div>
+                                        <span className="text-cyan-400 font-bold uppercase tracking-wider text-sm mb-2 block">FAQ</span>
+                                        <h2 className="text-3xl md:text-5xl font-extrabold text-white">
+                                            Dúvidas <br />
+                                            <span className="text-cyan-400">Frequentes</span>
+                                        </h2>
+                                    </div>
+                                    <div className="hidden md:block text-cyan-500/80 mt-4 md:mt-0">
+                                        <Mountain size={64} strokeWidth={1.5} />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    {faqs.map((faq, idx) => (
+                                        <FAQItem 
+                                            key={idx}
+                                            number={`0${idx + 1}`}
+                                            question={faq.question}
+                                            answer={faq.answer}
+                                            isOpen={openFAQ === idx}
+                                            onClick={() => toggleFAQ(idx)}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </FadeIn>
                     </div>
                 </section>
 
@@ -634,7 +776,7 @@
                             </div>
                             <span className="text-xl font-bold text-white">Evereste</span>
                         </div>
-                        <p className="mb-4">Sua parceira na jornada tech, do primeiro "Hello World" à liderança técnica.</p>
+                        <p className="mb-4">Desenvolvendo líderes e gestores para o futuro dos negócios.</p>
                         <div className="flex gap-4">
                             <div className="w-8 h-8 bg-slate-800 rounded flex items-center justify-center hover:bg-cyan-500 hover:text-slate-900 transition-colors cursor-pointer">IG</div>
                             <div className="w-8 h-8 bg-slate-800 rounded flex items-center justify-center hover:bg-cyan-500 hover:text-slate-900 transition-colors cursor-pointer">YT</div>
@@ -645,11 +787,11 @@
                         <div>
                         <h4 className="text-white font-bold mb-4 uppercase text-xs tracking-wider">Escolas</h4>
                         <ul className="space-y-2">
-                            <li><a href="#" className="hover:text-cyan-400">Programação</a></li>
-                            <li><a href="#" className="hover:text-cyan-400">Front-end</a></li>
-                            <li><a href="#" className="hover:text-cyan-400">Data Science</a></li>
-                            <li><a href="#" className="hover:text-cyan-400">DevOps</a></li>
-                            <li><a href="#" className="hover:text-cyan-400">UX & Design</a></li>
+                            <li><a href="#" className="hover:text-cyan-400">Gestão & Liderança</a></li>
+                            <li><a href="#" className="hover:text-cyan-400">Finanças</a></li>
+                            <li><a href="#" className="hover:text-cyan-400">Marketing & Vendas</a></li>
+                            <li><a href="#" className="hover:text-cyan-400">Projetos</a></li>
+                            <li><a href="#" className="hover:text-cyan-400">Tecnologia</a></li>
                         </ul>
                         </div>
 
@@ -659,7 +801,7 @@
                             <li><a href="#" className="hover:text-cyan-400">Sobre a Evereste</a></li>
                             <li><a href="#" className="hover:text-cyan-400">Para Empresas</a></li>
                             <li><a href="#" className="hover:text-cyan-400">Trabalhe Conosco</a></li>
-                            <li><a href="#" className="hover:text-cyan-400">Blog Tech</a></li>
+                            <li><a href="#" className="hover:text-cyan-400">Blog Corporativo</a></li>
                         </ul>
                         </div>
 
